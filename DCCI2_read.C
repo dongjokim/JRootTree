@@ -1,6 +1,7 @@
 #include "src/JBaseTrack.h"
 #include "src/JBaseEventHeader.h"
 #include "TClonesArray.h"
+#include <TStopwatch.h>
 #include "TFile.h"
 #include "TTree.h"
 #include <iostream>
@@ -22,55 +23,57 @@ int main(int argc, char **argv){
 	if(!in){ return 1;}
 
 	TFile *fOutRoot = new TFile(outputfile, "RECREATE");
-    TClonesArray *event = new TClonesArray("JBaseEventHeader",1000);
+	TClonesArray *event = new TClonesArray("JBaseEventHeader",1000);
 	TClonesArray *tracks = new TClonesArray("JBaseTrack",100000);
 	TTree *jTree = new TTree("jTree","Tree from DCCI2 files");
-    jTree->Branch("JEventHeaderList",&event);
+	jTree->Branch("JEventHeaderList",&event);
 	jTree->Branch("tracks",tracks);
 
+	int ieout = 100;
+	if (ieout<1) ieout=1;
+	TStopwatch timer;
+	timer.Start();
 	int  eventID;
 	int nevents = 0;
-	int NTracks = 10;
 	int ip = 0;
 	std::string templine;
 	event->Clear();
 	tracks->Clear();
 	while(getline(in,templine)) {
 		if(templine.find('#')!=std::string::npos) {
-			cout <<"Just comments" << endl;
 		} else if(templine.find('%')!=std::string::npos){
-			
-				istringstream iss(templine);
-				std::string pct;
-				int iev, nv;
-				string com;
-				double weight_in, tau;
-				iss >> com >> iev >> nv >> tau >> weight_in;
-				JBaseEventHeader *hdr = new( (*event)[event->GetEntriesFast()] ) JBaseEventHeader;
-				eventID = iev;
-				hdr->SetEventID(eventID);
-				//hdr->SetEventPlane(xx)
-				cout << "eventID : " << eventID <<  endl;
-				nevents++;	
+			istringstream iss(templine);
+			std::string pct;
+			int iev, nv;
+			string com;
+			double weight_in, tau;
+			iss >> com >> iev >> nv >> tau >> weight_in;
+			JBaseEventHeader *hdr = new( (*event)[event->GetEntriesFast()] ) JBaseEventHeader;
+			eventID = iev;
+			hdr->SetEventID(eventID);
+			//hdr->SetEventPlane(xx)
+			if(eventID % ieout == 0) cout << "eventID : " << eventID <<  endl;
+			nevents++;	
 		} else {
-				istringstream is(templine);
-				int data1, data2, ID, col, acol;
-				double m,e,px,py,pz,x,y,z,t,ft, rap;
-				std::string TAG;
-				is >> data1 >> data2 >> col >> acol >> ID >> m >> e >> px >> py >> pz >> rap >> x >> y >> z >> t >> ft >> TAG;
-			    new ( (*tracks)[ip++] )JBaseTrack(px, py, pz, e, ID, ID, 0);
-			    cout <<eventID<<" "<< ip<< "\t"<<px<<"\t"<<py<<"\t"<<pz<<"\t"<< ID << endl;
+			istringstream is(templine);
+			int data1, data2, ID, col, acol;
+			double m,e,px,py,pz,x,y,z,t,ft, rap;
+			std::string TAG;
+			is >> data1 >> data2 >> col >> acol >> ID >> m >> e >> px >> py >> pz >> rap >> x >> y >> z >> t >> ft >> TAG;
+			new ( (*tracks)[ip++] )JBaseTrack(px, py, pz, e, ID, ID, 0);
+			if(eventID % ieout == 0) cout <<"\t"<< eventID<<" "<< ip<< "\t"<<px<<"\t"<<py<<"\t"<<pz<<"\t"<< ID << endl;
 		}
 		jTree->Fill(); // fill last event
 	}
-	cout <<eventID<<"\t"<< tracks->GetEntriesFast() << endl;
-	
+	cout <<"Total events = "<< tracks->GetEntriesFast() << endl;
+
 	//fin.close();
 
 	cout <<"Total # of events = "<< nevents << endl;
 	jTree->Write();
 	fOutRoot->Close();
 	cout <<"Successfully finished."<<endl;
+	timer.Print();
 
 	return 0;
 }
