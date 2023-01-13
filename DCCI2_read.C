@@ -29,7 +29,7 @@ int main(int argc, char **argv){
 	jTree->Branch("JEventHeaderList",&event);
 	jTree->Branch("tracks",tracks);
 
-	int ieout = 100;
+	int ieout = 10;
 	if (ieout<1) ieout=1;
 	TStopwatch timer;
 	timer.Start();
@@ -38,7 +38,6 @@ int main(int argc, char **argv){
 	int ip = 0;
 	std::string templine;
 	event->Clear();
-	tracks->Clear();
 	while(getline(in,templine)) {
 		if(templine.find('#')!=std::string::npos) {
 		} else if(templine.find('%')!=std::string::npos){
@@ -63,9 +62,10 @@ int main(int argc, char **argv){
 			new ( (*tracks)[ip++] )JBaseTrack(px, py, pz, e, ID, ID, 0);
 			if(eventID % ieout == 0) cout <<"\t"<< eventID<<" "<< ip<< "\t"<<px<<"\t"<<py<<"\t"<<pz<<"\t"<< ID << endl;
 		}
-		jTree->Fill(); // fill last event
+		tracks->Clear();
 	}
-	cout <<"Total events = "<< tracks->GetEntriesFast() << endl;
+	jTree->Fill(); // fill last event
+	cout <<"Total events = "<<event->GetEntriesFast() << endl;
 
 	//fin.close();
 
