@@ -73,13 +73,7 @@ int main(int argc, char **argv){
 			new ( (*tracks)[ip++] )JBaseTrack(px, py, pz, e, ID, ID, 0);
 			if(eventID % ieout == 0) cout <<"\t"<< eventID<<" "<< ip<< "\t"<<px<<"\t"<<py<<"\t"<<pz<<"\t"<< ID << endl;
 		}
-<<<<<<< HEAD
 	}
-=======
-		tracks->Clear();
-	}
-	jTree->Fill(); // fill last event
->>>>>>> ab5faae71ec0896a46842611004e3effc12700a9
 	cout <<"Total events = "<<event->GetEntriesFast() << endl;
 
 	//fin.close();

@@ -27,4 +27,6 @@ void JHistos::CreateQAHistos() {
 		10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 40, 45, 50, 60, 70, 80, 90, 100};
 	fhPt = new TH1D("hPt", "pT spectra", nBins-1, ptt );
 	fhPt->Sumw2();
+	fheta = new TH1D("heta", "eta", 500, -10,10);
+	fheta->Sumw2();
 }

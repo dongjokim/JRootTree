@@ -64,6 +64,7 @@ int main(int argc, char **argv){
 		for(int itrack=0; itrack<noAllTracks; itrack++){
 			JBaseTrack *trk = (JBaseTrack*)inputList->At(itrack);
 			histos->fhPt->Fill(trk->Pt());
+			histos->fheta->Fill(trk->Eta());
 			//trk->Print("dmg");
 		}
 		EventCounter++;

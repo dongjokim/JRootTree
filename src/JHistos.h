@@ -33,6 +33,7 @@ class JHistos {
 		char  hname[140], htit[140];
 		float b1, b2, pb1, pb2;
 		TH1D *fhPt;
+		TH1D *fheta;
 
 
 	protected:
